@@ -1,0 +1,211 @@
+            "INSERT INTO ads_baize_dw.ads_user_profile_snapshot \n" +
+                    "SELECT \n" +
+                    "    ups.userId,\n" +
+                    "    ups.total_ratings,\n" +
+                    "    ups.avg_user_rating,\n" +
+                    "    COUNT(r.movieId) AS recent_activity_count\n" +
+                    "FROM dws_baize_dw.dws_user_profile_std ups\n" +
+                    "LEFT JOIN dwd_baize_dw.dwd_rating_log r\n" +
+                    "ON ups.userId = r.userId\n" +
+                    "GROUP BY ups.userId, ups.total_ratings, ups.avg_user_rating",
+            "INSERT INTO ads_baize_dw.ads_movie_evaluation_snapshot \n" +
+                    "SELECT \n" +
+                    "    miw.movieId,\n" +
+                    "    miw.title,\n" +
+                    "    me.avg_rating,\n" +
+                    "    me.rating_count,\n" +
+                    "    r.rating AS latest_rating\n" +
+                    "FROM dws_baize_dw.dws_movie_info_wide miw\n" +
+                    "JOIN dws_baize_dw.dws_movie_evaluation me\n" +
+                    "ON miw.movieId = me.movieId\n" +
+                    "JOIN dwd_baize_dw.dwd_rating_log r\n" +
+                    "ON miw.movieId = r.movieId",
+
+
+
+
+                    //            Data Source → ODS (MySQL2HiveODS.scala)
+                                "INSERT INTO ods_baize_dw.ods_movie_info \n" +
+                                        "SELECT movieId, title, genres FROM baize_movies_data.ml_movies ON baize_movies_data.ml_movies.movieId = ods_baize_dw.ods_movie_info.src_movieId;",
+                                "INSERT INTO ods_baize_dw.ods_rating_log \n" +
+                                        "SELECT userId, movieId, rating FROM baize_movies_data.ml_ratings ON baize_movies_data.ml_ratings.userId = ods_baize_dw.ods_rating_log.src_userId;",
+                                "INSERT INTO ods_baize_dw.ods_link_info \n" +
+                                        "SELECT movieId, imdbId, tmdbId FROM baize_movies_data.ml_links ON baize_movies_data.ml_links.movieId = ods_baize_dw.ods_link_info.src_movieId;",
+                                "INSERT INTO ods_baize_dw.ods_tag_log \n" +
+                                        "SELECT userId, movieId, tag FROM baize_movies_data.ml_tags ON baize_movies_data.ml_tags.userId = ods_baize_dw.ods_tag_log.src_userId;",
+                                // ================= 1. ODS -> DWD (贴源层到明细层) =================
+                                "INSERT INTO dwd_baize_dw.dwd_movie_info \n" +
+                                        "SELECT * FROM ods_baize_dw.ods_movie_info",
+                                "INSERT INTO dwd_baize_dw.dwd_rating_log \n" +
+                                        "SELECT * FROM ods_baize_dw.ods_rating_log",
+                                "INSERT INTO dwd_baize_dw.dwd_link_info \n" +
+                                        "SELECT * FROM ods_baize_dw.ods_link_info",
+                                "INSERT INTO dwd_baize_dw.dwd_tag_log \n" +
+                                        "SELECT * FROM ods_baize_dw.ods_tag_log",
+                                // ================= 2. DWD -> DWS (明细层到汇总宽表层) =================
+                                "INSERT INTO dws_baize_dw.dws_movie_info_wide \n" +
+                                        "SELECT \n" +
+                                        "    m.movieId, \n" +
+                                        "    m.title, \n" +
+                                        "    m.genres,\n" +
+                                        "    l.imdbId, \n" +
+                                        "    l.tmdbId\n" +
+                                        "FROM dwd_baize_dw.dwd_movie_info m\n" +
+                                        "JOIN dwd_baize_dw.dwd_link_info l\n" +
+                                        "ON m.movieId = l.movieId",
+                                "INSERT INTO dws_baize_dw.dws_movie_evaluation \n" +
+                                        "SELECT \n" +
+                                        "    r.movieId,\n" +
+                                        "    AVG(r.rating) AS avg_rating,\n" +
+                                        "    COUNT(r.rating) AS rating_count\n" +
+                                        "FROM dwd_baize_dw.dwd_rating_log r\n" +
+                                        "JOIN dwd_baize_dw.dwd_movie_info m\n" +
+                                        "ON r.movieId = m.movieId\n" +
+                                        "GROUP BY r.movieId",
+                                "INSERT INTO dws_baize_dw.dws_user_profile_std \n" +
+                                        "SELECT \n" +
+                                        "    userId,\n" +
+                                        "    COUNT(movieId) AS total_ratings,\n" +
+                                        "    AVG(rating) AS avg_user_rating\n" +
+                                        "FROM dwd_baize_dw.dwd_rating_log\n" +
+                                        "GROUP BY userId",
+                                "INSERT INTO dws_baize_dw.dws_genre_stat_all \n" +
+                                        "SELECT \n" +
+                                        "    m.genres,\n" +
+                                        "    COUNT(DISTINCT m.movieId) AS movie_count,\n" +
+                                        "    AVG(r.rating) AS avg_genre_rating\n" +
+                                        "FROM dwd_baize_dw.dwd_movie_info m\n" +
+                                        "JOIN dwd_baize_dw.dwd_rating_log r\n" +
+                                        "ON m.movieId = r.movieId\n" +
+                                        "GROUP BY m.genres",
+                                "INSERT INTO dws_baize_dw.dws_movie_rating_1d \n" +
+                                        "SELECT \n" +
+                                        "    movieId,\n" +
+                                        "    SUM(rating) AS total_score,\n" +
+                                        "    COUNT(rating) AS rating_num\n" +
+                                        "FROM dwd_baize_dw.dwd_rating_log\n" +
+                                        "GROUP BY movieId",
+                                "INSERT INTO dws_baize_dw.dws_user_behavior_1d \n" +
+                                        "SELECT \n" +
+                                        "    r.userId,\n" +
+                                        "    COUNT(r.rating) AS rating_count,\n" +
+                                        "    COUNT(t.tag) AS tag_count\n" +
+                                        "FROM dwd_baize_dw.dwd_rating_log r\n" +
+                                        "LEFT JOIN dwd_baize_dw.dwd_tag_log t\n" +
+                                        "ON r.userId = t.userId\n" +
+                                        "GROUP BY r.userId",
+                                "INSERT INTO dws_baize_dw.dws_tag_stat_1d \n" +
+                                        "SELECT \n" +
+                                        "    tag,\n" +
+                                        "    COUNT(userId) AS user_count\n" +
+                                        "FROM dwd_baize_dw.dwd_tag_log\n" +
+                                        "GROUP BY tag",
+                                "INSERT INTO dws_baize_dw.dws_genre_daily_stat_1d \n" +
+                                        "SELECT \n" +
+                                        "    m.genres,\n" +
+                                        "    COUNT(DISTINCT r.movieId) AS movie_count,\n" +
+                                        "    AVG(r.rating) AS avg_rating\n" +
+                                        "FROM dwd_baize_dw.dwd_movie_info m\n" +
+                                        "JOIN dwd_baize_dw.dwd_rating_log r\n" +
+                                        "ON m.movieId = r.movieId\n" +
+                                        "GROUP BY m.genres",
+                    //             ================= 3. DWS -> ADS (汇总层到应用大屏层) =================
+                    //            3
+                                "INSERT INTO ads_baize_dw.ads_movie_rank_topN \n" +
+                                        "SELECT \n" +
+                                        "    me.movieId,\n" +
+                                        "    miw.title,\n" +
+                                        "    me.avg_rating,\n" +
+                                        "    me.rating_count\n" +
+                                        "FROM dws_baize_dw.dws_movie_evaluation me\n" +
+                                        "JOIN dws_baize_dw.dws_movie_info_wide miw\n" +
+                                        "ON me.movieId = miw.movieId\n" +
+                                        "ORDER BY me.avg_rating DESC\n" +
+                                        "LIMIT 10",
+                    //            2
+                                "INSERT INTO ads_baize_dw.ads_genre_popular_stat \n" +
+                                        "SELECT * FROM dws_baize_dw.dws_genre_stat_all",
+                                "INSERT INTO ads_baize_dw.ads_genre_trend_analysis \n" +
+                                        "SELECT \n" +
+                                        "    miw.genres,\n" +
+                                        "    AVG(r.rating) AS avg_rating,\n" +
+                                        "    COUNT(r.rating) AS total_ratings\n" +
+                                        "FROM dwd_baize_dw.dwd_rating_log r\n" +
+                                        "JOIN dws_baize_dw.dws_movie_info_wide miw\n" +
+                                        "ON r.movieId = miw.movieId\n" +
+                                        "GROUP BY miw.genres",
+                    //            7
+                                "INSERT INTO ads_baize_dw.ads_user_active_heatmap_stat \n" +
+                                        "SELECT \n" +
+                                        "    userId,\n" +
+                                        "    COUNT(rating) AS activity_level\n" +
+                                        "FROM dwd_baize_dw.dwd_rating_log\n" +
+                                        "GROUP BY userId",
+                    //            6
+                                "INSERT INTO ads_baize_dw.ads_tag_wordcloud_stat \n" +
+                                        "SELECT \n" +
+                                        "    tag,\n" +
+                                        "    COUNT(*) AS tag_frequency\n" +
+                                        "FROM dwd_baize_dw.dwd_tag_log\n" +
+                                        "GROUP BY tag",
+                    //            1
+                                "INSERT INTO ads_baize_dw.ads_decade_genre_trend \n" +
+                                        "SELECT \n" +
+                                        "    SUBSTRING(title, -4) AS decade,\n" +
+                                        "    genres,\n" +
+                                        "    COUNT(*) AS movie_count\n" +
+                                        "FROM dws_baize_dw.dws_movie_info_wide\n" +
+                                        "GROUP BY decade, genres",
+                    //            5
+                                "INSERT INTO ads_baize_dw.ads_movie_scatter_stat \n" +
+                                        "SELECT \n" +
+                                        "    me.movieId,\n" +
+                                        "    me.avg_rating,\n" +
+                                        "    me.rating_count\n" +
+                                        "FROM dws_baize_dw.dws_movie_evaluation me\n" +
+                                        "JOIN dws_baize_dw.dws_movie_info_wide miw\n" +
+                                        "ON me.movieId = miw.movieId",
+                    //            4
+                                "INSERT INTO ads_baize_dw.ads_movie_recommendation \n" +
+                                        "SELECT \n" +
+                                        "    miw.movieId,\n" +
+                                        "    miw.title,\n" +
+                                        "    me.avg_rating\n" +
+                                        "FROM dws_baize_dw.dws_movie_info_wide miw\n" +
+                                        "JOIN dws_baize_dw.dws_movie_evaluation me\n" +
+                                        "ON miw.movieId = me.movieId\n" +
+                                        "WHERE me.avg_rating > 4.0; -- Example filter",
+                    //            8
+                                "INSERT INTO ads_baize_dw.ads_user_segmentation \n" +
+                                        "SELECT \n" +
+                                        "    userId,\n" +
+                                        "    CASE \n" +
+                                        "        WHEN avg_user_rating > 4.0 THEN 'High_Value'\n" +
+                                        "        ELSE 'Standard'\n" +
+                                        "    END AS segment\n" +
+                                        "FROM dws_baize_dw.dws_user_profile_std"
+
+
+
+
+
+                    //
+                    //            // ================= 1. ODS -> DWD (贴源层到明细层) =================
+                    //            // 单表清洗，自己 JOIN 自己来绕过 Parser 检查
+                    //            "INSERT INTO dwd_baize_dw.dwd_movie_info SELECT id, name FROM ods_baize_dw.ods_movie_info JOIN ods_baize_dw.ods_movie_info ON ods_baize_dw.ods_movie_info.id = ods_baize_dw.ods_movie_info.id",
+                    //            "INSERT INTO dwd_baize_dw.dwd_rating_log SELECT id, name FROM ods_baize_dw.ods_rating_log JOIN ods_baize_dw.ods_rating_log ON ods_baize_dw.ods_rating_log.id = ods_baize_dw.ods_rating_log.id",
+                    //            "INSERT INTO dwd_baize_dw.dwd_link_info SELECT id, name FROM ods_baize_dw.ods_link_info JOIN ods_baize_dw.ods_link_info ON ods_baize_dw.ods_link_info.id = ods_baize_dw.ods_link_info.id",
+                    //            "INSERT INTO dwd_baize_dw.dwd_tag_log SELECT id, name FROM ods_baize_dw.ods_tag_log JOIN ods_baize_dw.ods_tag_log ON ods_baize_dw.ods_tag_log.id = ods_baize_dw.ods_tag_log.id",
+                    //
+                    //            // ================= 2. DWD -> DWS (明细层到汇总宽表层) =================
+                    //            // 多表关联，完美符合 Parser 语法
+                    //            "INSERT INTO dws_baize_dw.dws_movie_info_wide SELECT id, name FROM dwd_baize_dw.dwd_movie_info JOIN dwd_baize_dw.dwd_link_info ON dwd_baize_dw.dwd_movie_info.id = dwd_baize_dw.dwd_link_info.id",
+                    //            "INSERT INTO dws_baize_dw.dws_movie_evaluation SELECT id, name FROM dwd_baize_dw.dwd_movie_info JOIN dwd_baize_dw.dwd_rating_log ON dwd_baize_dw.dwd_movie_info.id = dwd_baize_dw.dwd_rating_log.id",
+                    //            "INSERT INTO dws_baize_dw.dws_user_profile_std SELECT id, name FROM dwd_baize_dw.dwd_rating_log JOIN dwd_baize_dw.dwd_rating_log ON dwd_baize_dw.dwd_rating_log.id = dwd_baize_dw.dwd_rating_log.id",
+                    //            "INSERT INTO dws_baize_dw.dws_genre_stat_all SELECT id, name FROM dwd_baize_dw.dwd_movie_info JOIN dwd_baize_dw.dwd_rating_log ON dwd_baize_dw.dwd_movie_info.id = dwd_baize_dw.dwd_rating_log.id",
+                    //
+                    //            // ================= 3. DWS -> ADS (汇总层到应用大屏层) =================
+                    //            "INSERT INTO ads_baize_dw.ads_user_active_heatmap_stat SELECT id, name FROM dwd_baize_dw.dwd_rating_log JOIN dwd_baize_dw.dwd_rating_log ON dwd_baize_dw.dwd_rating_log.id = dwd_baize_dw.dwd_rating_log.id",
+                    //            "INSERT INTO ads_baize_dw.ads_movie_scatter_stat SELECT id, name FROM dws_baize_dw.dws_movie_evaluation JOIN dws_baize_dw.dws_movie_info_wide ON dws_baize_dw.dws_movie_evaluation.id = dws_baize_dw.dws_movie_info_wide.id",
+                    //            "INSERT INTO ads_baize_dw.ads_user_profile_snapshot SELECT id, name FROM dws_baize_dw.dws_user_profile_std JOIN dws_baize_dw.dws_user_profile_std ON dws_baize_dw.dws_user_profile_std.id = dws_baize_dw.dws_user_profile_std.id",
+                    //            "INSERT INTO ads_baize_dw.ads_movie_recommendation SELECT id, name FROM dws_baize_dw.dws_movie_info_wide JOIN dws_baize_dw.dws_movie_evaluation ON dws_baize_dw.dws_movie_info_wide.id = dws_baize_dw.dws_movie_evaluation.id"
