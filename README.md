@@ -1,5 +1,5 @@
 # Film Data Middle Platform
-<img width="1614" height="1268" alt="Pasted image 20260308100159" src="https://github.com/user-attachments/assets/11094a60-cc92-47fc-a2ce-4689421d489f" />
+
 #  Data Platform (电影推荐与数据治理中台)
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
@@ -66,3 +66,4 @@
 - [Hive元数据智能字典](./images/metadata_dictionary.png)
 - [AI 可解释个性化推荐](./images/ai_recommendation.png)
 
+<img width="1614" height="1268" alt="Pasted image 20260308100159" src="https://github.com/user-attachments/assets/11094a60-cc92-47fc-a2ce-4689421d489f" />
