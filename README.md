@@ -57,15 +57,6 @@
 * [cite_start]**LLM Integration**: GPT / 自定义大模型接口 [cite: 289, 324]
 * [cite_start]**Frontend**: Vue 3, Vue Router, Element-UI, Apache ECharts [cite: 22, 108, 109]
 
-##  快速开始 (Quick Start)
-
-*(此处可补充你的运行指导)*
-1. **环境准备**：克隆本项目，确保已启动 Hadoop、Zookeeper、Kafka 集群。
-2. **初始化数据库**：执行 `sql/init.sql` 导入 MySQL 系统权限与字典表数据。
-3. **后端启动**：修改 `application.yml` 中的数据源连接配置，运行 `BaizeApplication.java`。
-4. **前端启动**：进入 `frontend` 目录，执行 `npm install` 与 `npm run dev`。
-5. **推荐服务**：进入 `recommendation-api` 目录，执行 `pip install -r requirements.txt` 并启动 FastAPI。
-
 ##  系统截图
 
 *(建议上传截图至仓库的 `images` 文件夹并替换以下链接)*
