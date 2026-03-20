@@ -66,5 +66,3 @@
 - [Hive元数据智能字典](./images/metadata_dictionary.png)
 - [AI 可解释个性化推荐](./images/ai_recommendation.png)
 
-##  开源协议
-[MIT License](LICENSE)
