@@ -2,7 +2,7 @@
 
 #  Data Platform (电影推荐与数据治理中台)
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
+
 ![Java](https://img.shields.io/badge/Java-Spring_Boot_3-green.svg)
 ![BigData](https://img.shields.io/badge/BigData-Hadoop_|_Spark_|_Flink-orange.svg)
 ![Vue](https://img.shields.io/badge/Frontend-Vue_3-brightgreen.svg)
