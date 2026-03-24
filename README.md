@@ -15,7 +15,7 @@
 
 ##  核心特性
 
-* ** 批流一体的大数据底座**
+*  批流一体的大数据底座
   * **高可用架构**：底层基于 Zookeeper 协调的 Hadoop 3 (HDFS/YARN) HA 架构，保障全局容灾
   * **规范化离线数仓**：基于 Spark SQL 构建 ODS -> DWD -> DWS -> ADS 标准四层数仓模型，有效降低跨表关联成本
   * **秒级实时流处理**：采用 Flume + Kafka + Flink 架构，通过 Flink 侧输出流（Side Output）机制将日志精准路由至 ClickHouse 与 Hive，实现“一路输入，多路落盘”的流批一体化
