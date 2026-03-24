@@ -20,19 +20,19 @@
   * **规范化离线数仓**：基于 Spark SQL 构建 ODS -> DWD -> DWS -> ADS 标准四层数仓模型，有效降低跨表关联成本
   * **秒级实时流处理**：采用 Flume + Kafka + Flink 架构，通过 Flink 侧输出流（Side Output）机制将日志精准路由至 ClickHouse 与 Hive，实现“一路输入，多路落盘”的流批一体化
 
-* ** 全链路数据治理中心**
+*  全链路数据治理中心
   * **数据质量监控 (DQC)**：结合 Hive Metastore 与定时调度，实现表级/字段级的空值率、注释缺漏率等健康度大盘监控
   * **全景血缘拓扑**：利用 ANTLR4 深度解析 SQL 语法树提取表级血缘，并持久化至 Neo4j，通过有向无环图 (DAG) 解决数据溯源难题
 
-* ** LLM 智能化赋能**
+*  LLM 智能化赋能
   * **Schema-Aware 智能补全**：借助大模型自动推断并批量回填缺失的 Hive 字段业务注释，极大降低人工维护成本
   * **NL2SQL 探查助手**：将业务人员的自然语言（如“近十年各题材电影数量”）自动转化为可执行的 SQL 并动态渲染报表
 
-* ** 微服务化智能推荐引擎**
+*  微服务化智能推荐引擎
   * **多策略协同过滤**：基于 Python FastAPI 独立构建，支持 Item-CF、User-CF、混合策略及新用户冷启动降级兜底
   * **可解释性 AI 推荐**：结合 LLM 画像引擎，为协同过滤结果动态生成带情感偏好的“自然语言推荐理由”，打破算法黑盒
 
-* ** 多维实时大屏与交互管控**
+*  多维实时大屏与交互管控
   * 整合 Vue.js 与 ECharts，实现 GMV 实时滚屏、CDN 全国健康度态势感知地图、受众画像词云与电影特征雷达图展示
 
 ##  技术栈架构
@@ -59,11 +59,10 @@
 
 ##  系统截图
 
-*(建议上传截图至仓库的 `images` 文件夹并替换以下链接)*
-
-- [实时营收与大屏监控](./images/realtime_dashboard.png)
-- [全链路数据血缘拓扑](./images/data_lineage.png)
-- [Hive元数据智能字典](./images/metadata_dictionary.png)
-- [AI 可解释个性化推荐](./images/ai_recommendation.png)
+- [实时营收与大屏监控]
+  
+- [全链路数据血缘拓扑]
+- [Hive元数据智能字典]
+- [AI 可解释个性化推荐]
 
 <img width="1614" height="1268" alt="Pasted image 20260308100159" src="https://github.com/user-attachments/assets/11094a60-cc92-47fc-a2ce-4689421d489f" />
