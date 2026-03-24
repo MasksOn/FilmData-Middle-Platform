@@ -61,7 +61,7 @@
 
 ##  系统截图
 
-- [实时营收与大屏监控]
+- [CDN 全国健康度态势感知地图]
   <img width="2546" height="1420" alt="Pasted image 20260308142302" src="https://github.com/user-attachments/assets/a979784e-1d20-477f-b57f-1cc7d378b43b" />
 - [全链路数据血缘拓扑]
  <img width="2155" height="1110" alt="Pasted image 20260308153952" src="https://github.com/user-attachments/assets/82c4a772-2cfa-45eb-9de4-ab7b1ded2486" />
