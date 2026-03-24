@@ -9,9 +9,9 @@
 
 ## 📖 项目简介
 
-本项目是一个基于大数据生态体系构建的综合性电影推荐与数据治理中台21]。系统打通了**“数据采集—批流计算—数据治理—智能应用”**的全生命周期链路，旨在解决企业级海量数据处理中的高并发痛点与“数据孤岛”问题
+本项目是一个基于大数据生态体系构建的综合性电影推荐与数据治理中台。系统打通了**“数据采集—批流计算—数据治理—智能应用”**的全生命周期链路，旨在解决企业级海量数据处理中的高并发痛点与“数据孤岛”问题
 
-平台不仅支撑了底层 2700万+ 规模数据的规范化四层数仓建设与秒级实时大屏，还创新性地引入了 **Neo4j 图数据库**进行血缘链路追踪22]，并深度整合 **大语言模型（LLM）** 实现了智能化的元数据治理与可解释性 AI 推荐
+平台不仅支撑了底层 2700万+ 规模数据的规范化四层数仓建设与秒级实时大屏，还创新性地引入了 **Neo4j 图数据库**进行血缘链路追踪，并深度整合 **大语言模型（LLM）** 实现了智能化的元数据治理与可解释性推荐
 
 ##  核心特性
 
@@ -52,17 +52,21 @@
 * **Relational Database**: MySQL
 * **Backend Framework**: Spring Boot 3, MyBatis, JWT Auth
 
-### 4. AI 推荐 & 前端展示
+### 4. 推荐 & 前端展示
 * **Algorithm Microservice**: Python, FastAPI, Scikit-learn, Pandas
-* **LLM Integration**: GPT / 自定义大模型接口
 * **Frontend**: Vue 3, Vue Router, Element-UI, Apache ECharts
+
+
+<img width="1614" height="1268" alt="Pasted image 20260308100159" src="https://github.com/user-attachments/assets/11094a60-cc92-47fc-a2ce-4689421d489f" />
 
 ##  系统截图
 
 - [实时营收与大屏监控]
-  
+  <img width="2546" height="1420" alt="Pasted image 20260308142302" src="https://github.com/user-attachments/assets/a979784e-1d20-477f-b57f-1cc7d378b43b" />
 - [全链路数据血缘拓扑]
+ <img width="2155" height="1110" alt="Pasted image 20260308153952" src="https://github.com/user-attachments/assets/82c4a772-2cfa-45eb-9de4-ab7b1ded2486" />
 - [Hive元数据智能字典]
-- [AI 可解释个性化推荐]
+ <img width="2203" height="1105" alt="Pasted image 20260316181119" src="https://github.com/user-attachments/assets/0f250264-f10a-4df1-aa12-1960e9b53780" />
+- [NL2SQL 探查助手]
+ <img width="2200" height="838" alt="Pasted image 20260316181443" src="https://github.com/user-attachments/assets/11d2e1a6-4fa8-4102-a4ef-740991c789de" />
 
-<img width="1614" height="1268" alt="Pasted image 20260308100159" src="https://github.com/user-attachments/assets/11094a60-cc92-47fc-a2ce-4689421d489f" />
